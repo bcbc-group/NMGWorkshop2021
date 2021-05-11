@@ -4,19 +4,23 @@
 #count proteins in mikado output
 awk '$3 == "gene" {print $0}' mikado.loci.gff3 |wc
 
-#extract proteins from mikado output and remove ones with a single exon 
-gffread -U -J  -y mikado_prot.fasta -g contig_15.fasta  mikado.loci.gff3 
+#extract proteins from mikado output and remove ones with a single exon
+/opt/gffread/gffread -U -J  -y mikado_prot.fasta -g contig_15.fasta  mikado.loci.gff3
+mkdir orthofinder_input
+mv mikado_prot.fasta orthofinder_input
+cp orthofinder_input/mikado_prot.fasta orthofinder_input/mikado_prot2.fasta
 
-#use orthofinder to remove redundancy; orthofinder_input contains two copies of mikado_prot.fasta 
-/tools/OrthoFinder-2.3.3/orthofinder -t 7 -a 7 -f orthofinder_input/
 
-cut -f2 OrthoFinder/Results_Jul27_1/Orthogroups/Orthogroups.tsv |cut -f1 -d " " > groups.txt
+#use orthofinder to remove redundancy; orthofinder_input contains two copies of mikado_prot.fasta
+/opt/OrthoFinder/orthofinder -t 7 -a 7 -f orthofinder_input/
+
+cut -f2 orthofinder_input/OrthoFinder/Results_May11/Orthogroups/Orthogroups.tsv |cut -f1 -d " " > groups.txt
 
 git clone https://github.com/solgenomics/sgn-biotools.git
 
 sed 's/ gene=mikado.*//g' mikado_prot.fasta > mikado_prot2.fasta
 
-sgn-biotools/bin/fasta_extract.pl -f mikado_prot2.fasta -i orthofinder_input/OrthoFinder/Results_Jul27_1/Orthogroups/groups.txt -z fasta -o mikado_proteins_training
+sgn-biotools/bin/fasta_extract.pl -f mikado_prot2.fasta -i groups.txt -z fasta -o mikado_proteins_training
 
 #run scipio to get genbank file
 /opt/scipio-1.4/scipio.1.4.1.pl --blat_output=prot.vs.genome.psl contig_15.fasta mikado_prot_training.fasta > scipio.yaml #runs awhile
@@ -44,7 +48,7 @@ grep -c "LOCUS" genes.*
 iget -rPT /iplant/home/shared/Botany2020NMGWorkshop/Annotation
 
 #randomly split set to training and test sets
-/opt/augustus-3.2.2/scripts/randomSplit.pl genes.gb 200 
+/opt/augustus-3.2.2/scripts/randomSplit.pl genes.gb 200
 
 grep -c LOCUS genes.gb*
 

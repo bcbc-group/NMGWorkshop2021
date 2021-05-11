@@ -9,13 +9,13 @@ docker run -v /scratch/Botany2020NMGWorkshop/annotation:/data -w /data/ kapeel/e
 #run protexcluder
 blastx -db uniprot_sprot_plants.fasta -query consensi.fa.classified -out repeats2swissprot_blast.out -num_threads 20
 
-/opt/ProtExcluder1.1/ProtExcluder.pl  -f 0 repeats2swissprot_blast.out consensi.fa.classified 
- 
+/opt/ProtExcluder1.1/ProtExcluder.pl  -f 0 repeats2swissprot_blast.out consensi.fa.classified
+
 #run Repeatmasker
 /opt/RepeatMasker/RepeatMasker -pa 7 -qq -lib consensi.fa.classifiednoProtFinal -noisy -a -gff -u Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa
 
-#Soft mask genome
-bedtools maskfasta -fi Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa -bed Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa.out.gff -fo contig_15.masked.fasta -soft -fullHeader
+#Hard mask genome
+bedtools maskfasta -fi Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa -bed Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa.out.gff -fo contig_15.masked.fasta -fullHeader
 
 #Extract contig 15 for our test annotation
 git clone https://github.com/solgenomics/sgn-biotools.git #to get fasta_extract.pl script
