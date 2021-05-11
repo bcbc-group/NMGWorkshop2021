@@ -4,9 +4,11 @@
 docker pull kapeel/edta
 
 #run EDTA (https://github.com/oushujun/EDTA)
+cd /scratch/annotation_output
+
 docker run -v /scratch/Botany2020NMGWorkshop/annotation:/data -w /data/ kapeel/edta:latest --genome Ugibba_FLYE_assembly.fasta.PolcaCorrected.fa --threads 7
 
-#run protexcluder
+#run protexcluder so domains are not repeatmasked later on
 blastx -db uniprot_sprot_plants.fasta -query consensi.fa.classified -out repeats2swissprot_blast.out -num_threads 20
 
 /opt/ProtExcluder1.1/ProtExcluder.pl  -f 0 repeats2swissprot_blast.out consensi.fa.classified

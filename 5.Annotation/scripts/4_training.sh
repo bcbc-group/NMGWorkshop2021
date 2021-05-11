@@ -22,12 +22,12 @@ cut -f2 orthofinder_input/OrthoFinder/Results_May11/Orthogroups/Orthogroups.tsv 
 
 git clone https://github.com/solgenomics/sgn-biotools.git
 
-sed 's/ gene=mikado.*//g' mikado_prot.fasta > mikado_prot2.fasta
+sed 's/ gene=mikado.*//g' orthofinder_input/mikado_prot.fasta > mikado_prot2.fasta
 
 sgn-biotools/bin/fasta_extract.pl -f mikado_prot2.fasta -i groups.txt -z fasta -o mikado_proteins_training
 
 #run scipio to get genbank file
-/opt/scipio-1.4/scipio.1.4.1.pl --blat_output=prot.vs.genome.psl contig_15.fasta mikado_prot_training.fasta > scipio.yaml #runs awhile
+/opt/scipio-1.4/scipio.1.4.1.pl --blat_output=prot.vs.genome.psl contig_15.fasta mikado_proteins_training.fasta > scipio.yaml #runs awhile
 
 cat scipio.yaml | /opt/scipio-1.4/yaml2gff.1.4.pl > scipio.scipiogff
 
@@ -61,16 +61,17 @@ username=`whoami`
 sudo chown $username /usr/share/augustus/config/species/
 
 #create the new species conf
-/usr/share/augustus/scripts/new_species.pl --species=Ugibba
+/usr/share/augustus/scripts/new_species.pl --species=Ugibba --AUGUSTUS_CONFIG_PATH /usr/share/augustus/config/
 
 #train augustus
-etraining --species=Ugibba genes.gb.train
+etraining --species=Ugibba genes.gb.train --stopCodonExcludedFromCDS=true
 
 #look at new files created
 ls -ort $AUGUSTUS_CONFIG_PATH/species/Ugibba
 
 #test the training
 augustus --species=Ugibba genes.gb.test | tee firsttest.out
+tail -n 100 ../Botany2020NMGWorkshop/annotation/2transfer/firsttest.out 
 
 #train snap (http://weatherby.genetics.utah.edu/MAKER/wiki/index.php/MAKER_Tutorial_for_GMOD_Online_Training_2014#Ab_Initio_Gene_Prediction) under "Training ab initio Gene Predictors"
 #you can use the  same training set used in augustus
