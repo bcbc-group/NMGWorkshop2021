@@ -26,6 +26,6 @@ cd contig_15.maker.output
 /opt/gffread/gffread -g ../contig_15.fasta -y maker1_proteins.fasta maker1_models.gff
 
 #run BUSCO
-iget -rPT /iplant/home/shared/Botany2020NMGWorkshop/embryophyta_odb9
+#iget -rPT /iplant/home/shared/Botany2020NMGWorkshop/embryophyta_odb9
 
 docker run -u $(id -u) -v $(pwd):/busco_wd ezlabgva/busco:v5.1.2_cv1 busco -i maker1_proteins.fasta --out Ugibba_maker1 -c 7 --auto-lineage --mode prot
