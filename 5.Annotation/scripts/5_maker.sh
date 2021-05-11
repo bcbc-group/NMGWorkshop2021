@@ -12,6 +12,11 @@ emacs maker_opts.ctl
 #est2genome=0
 #protein2genome=0
 
+#cp needed files
+cd /scratch/annotation_output
+cp /scratch/Botany2020NMGWorkshop/annotation/2transfer/contig_15_masked.fasta .
+cp /scratch/Botany2020NMGWorkshop/annotation/2transfer/uniprot_sprot_plants.fasta .
+
 #run maker
 #screen -L mpirun -np 7 maker -base maker1       #will take awhile - output on CyVerse data store under /iplant/home/shared/Botany2020NMGWorkshop/annotation/2transfer/contig_15.maker.output
 screen  /opt/maker/bin/maker -base maker1       #will take awhile - output on /scratch/Botany2020NMGWorkshop/annotation/2transfer/contig_15.maker.output/
